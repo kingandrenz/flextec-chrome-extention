@@ -1,3 +1,10 @@
+import fetchLocations from "./api/fetchLocations.js";
+
+// #6: how to make crome extention api calls:
+chrome.runtime.onInstalled.addListener((details) => {
+  fetchLocations();
+});
+
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   const { event, prefs } = data;
 
