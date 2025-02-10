@@ -1,4 +1,4 @@
-import { handleNotification } from "../lib/handleNotifications.js";
+// import { handleNotification } from "../lib/createNotification.js";
 
 const LOCATION_ENDPOINT =
   "https://ttp.cbp.dhs.gov/schedulerapi/locations/?temporary=false&inviteOnly=false&operational=true&serviceName=Global%20Entry";
