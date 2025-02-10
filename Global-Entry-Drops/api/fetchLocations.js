@@ -1,7 +1,9 @@
+import { handleNotification } from "../lib/handleNotifications.js";
+
 const LOCATION_ENDPOINT =
   "https://ttp.cbp.dhs.gov/schedulerapi/locations/?temporary=false&inviteOnly=false&operational=true&serviceName=Global%20Entry";
 
-export default function fetchLocations() {
+export const fetchLocations = () => {
   fetch(LOCATION_ENDPOINT)
     .then((response) => response.json())
     .then((data) => {
@@ -18,4 +20,4 @@ export default function fetchLocations() {
     .catch((error) => {
       console.log(error);
     });
-}
+};

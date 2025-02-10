@@ -1,6 +1,9 @@
-import fetchLocations from "./api/fetchLocations.js";
+import { fetchLocations } from "./api/fetchLocations.js";
+import { fetchOpenSlots } from "./api/fetchOpenSlots.js";
 
 const ALARM_JOB_NAME = "DROP_ALARM";
+
+let catchedPrefs = {};
 
 // #6: how to make crome extention api calls:
 chrome.runtime.onInstalled.addListener((details) => {
@@ -27,11 +30,13 @@ const handleOnStop = (prefs) => {
   console.log("Stop event received");
   setRunningStatus(false);
   stopAlarm();
+  catchedPrefs = {};
 };
 
 const handleOnStart = (prefs) => {
   console.log("Start event received");
   console.log("prefs received:", prefs);
+  catchedPrefs = prefs;
   chrome.storage.local.set(prefs);
   setRunningStatus(true);
   createAlarm();
@@ -55,4 +60,5 @@ const stopAlarm = () => {
 
 chrome.alarms.onAlarm.addListener(() => {
   console.log("Alarm scheduled!!");
+  fetchOpenSlots(catchedPrefs);
 });
