@@ -9,6 +9,7 @@ let firstAppointmentTimestamp = null;
 
 // #6: how to make crome extention api calls:
 chrome.runtime.onInstalled.addListener((details) => {
+  handleOnStop();
   fetchLocations();
 });
 
@@ -26,6 +27,17 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
       console.warn("Unknown event:", event);
       break;
   }
+});
+
+chrome.notifications.onClicked.addListener(() => {
+  chrome.tabs.create({
+    url: "https://ttp.cbp.dhs.gov/schedulerui/schedule-interview/location?lang=en&vo=true&returnUrl=ttp-external&service=up",
+  });
+});
+
+chrome.alarms.onAlarm.addListener(() => {
+  console.log("Alarm scheduled!!");
+  openSlotsJob();
 });
 
 const handleOnStop = (prefs) => {
@@ -60,11 +72,6 @@ const createAlarm = () => {
 const stopAlarm = () => {
   chrome.alarms.clearAll();
 };
-
-chrome.alarms.onAlarm.addListener(() => {
-  console.log("Alarm scheduled!!");
-  openSlotsJob();
-});
 
 const openSlotsJob = () => {
   fetchOpenSlots(catchedPrefs).then((data) => handleOpenSlots(data));

@@ -1,14 +1,10 @@
 export const createNotification = (openSlots, numberOfSlots, prefs) => {
   const { tzData } = prefs;
 
-  let message = "";
+  let message = `Found an item interview at ${openSlots.timestamp} ${tzData} timezone`;
 
   if (numberOfSlots > 1) {
-    message = `Found an item interview at (${
-      openSlots.timestamp
-    } ${tzData} timezone) and ${numberOfSlots - 1} additional open interviews`;
-  } else {
-    message = `Found an item interview at ${openSlots.timestamp} ${tzData} timezone`;
+    message = `${message} and ${numberOfSlots - 1} additional open interviews`;
   }
 
   chrome.notifications.create({
@@ -18,9 +14,3 @@ export const createNotification = (openSlots, numberOfSlots, prefs) => {
     type: "basic",
   });
 };
-
-chrome.notifications.onClicked.addListener(() => {
-  chrome.tabs.create({
-    url: "https://ttp.cbp.dhs.gov/schedulerui/schedule-interview/location?lang=en&vo=true&returnUrl=ttp-external&service=up",
-  });
-});

@@ -1,7 +1,7 @@
 // Elements
 const locationIdElement = document.getElementById("locationid");
-const startDateElement = document.getElementById("startdate");
-const endDateElement = document.getElementById("enddate");
+const startDateElement = document.getElementById("startDate");
+const endDateElement = document.getElementById("endDate");
 
 // button
 const startButton = document.getElementById("startbutton");
@@ -58,28 +58,59 @@ const handleOnStopState = () => {
   enableElement(endDateElement);
 };
 
+const showDateError = (dateErrorElem, errorMessage) => {
+  dateErrorElem.innerHTML = errorMessage;
+  showElement(dateErrorElem);
+};
+
+const validateStartDate = (today, startDate) => {
+  const isAfterToday = !startDate.isBefore(today, "date");
+  if (!startDateElement.value) {
+    showDateError(startDateError, "please enter a valid start date");
+  } else if (!isAfterToday) {
+    showDateError(startDateError, "start date must be before today");
+  } else {
+    hideElement(startDateError);
+  }
+
+  return startDateElement.value && isAfterToday;
+};
+
+const validateEndDate = (today, startDate, endDate) => {
+  const isAfterStartDate = endDate.isAfter(startDate, "date");
+  const isAfterToday = endDate.isAfter(today, "day");
+
+  if (!endDateElement.value) {
+    showDateError(endDateError, "please enter a valid end date");
+  } else if (!isAfterStartDate) {
+    showDateError(endDateError, "End date must be after the start date");
+  } else {
+    hideElement(endDateError);
+  }
+
+  return endDateElement.value && isAfterStartDate && isAfterToday;
+};
+
+const validateDates = () => {
+  const today = spacetime.now().startOf("day");
+  const startDate = spacetime(startDateElement.value).startOf("day");
+  const endDate = spacetime(endDateElement.value).startOf("day");
+
+  const isStartDateValid = validateStartDate(today, startDate);
+  const isEndDateValid = validateEndDate(today, startDate, endDate);
+
+  return isStartDateValid && isEndDateValid;
+};
+
 const performOnStartValidation = () => {
+  const isDateValid = validateDates();
   if (!locationIdElement.value) {
     showElement(locationIdError);
   } else {
     hideElement(locationIdError);
   }
 
-  if (!startDateElement.value) {
-    showElement(startDateError);
-  } else {
-    hideElement(startDateError);
-  }
-
-  if (!endDateElement.value) {
-    showElement(endDateError);
-  } else {
-    hideElement(endDateError);
-  }
-
-  return (
-    locationIdElement.value && startDateElement.value && endDateElement.value
-  );
+  return locationIdElement.value && isDateValid;
 };
 
 // listening to events
@@ -140,3 +171,8 @@ const setLocations = (locations) => {
     locationIdElement.appendChild(optionElement);
   });
 };
+
+// diabling past dates
+const today = spacetime.now().startOf("day").format();
+startDateElement.setAttribute("min", today);
+endDateElement.setAttribute("min", today);
